@@ -1,0 +1,35 @@
+{
+  "name": "iframe-radio",
+  "private": false,
+  "version": "0.0.1",
+  "description": "Communicate securely between an iframe and a web page.",
+  "license": "MIT",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "source": "src/index.ts",
+  "author": {
+    "name": "Jack R. Scott",
+    "email": "jack.rob.scott@gmail.com"
+  },
+  "files": [
+    "lib",
+    "README.md"
+  ],
+  "scripts": {
+    "start": "nodemon",
+    "test": "mocha -r ts-node/register src/**/*.test.ts",
+    "build": "yarn run clean && yarn run compile",
+    "clean": "rm -rf lib",
+    "compile": "tsc",
+    "lint": "tslint src/**/*"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.1",
+    "prettier": "^1.18.2",
+    "ts-node": "^8.3.0",
+    "tslint": "^5.17.0",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^3.5.2"
+  }
+}
