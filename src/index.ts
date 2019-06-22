@@ -1,1 +1,1 @@
-export * from './modules/Radio';
+export * from './Radio';
