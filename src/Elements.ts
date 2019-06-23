@@ -1,6 +1,6 @@
 export class Elements {
   /**
-   * Create an element.
+   * Create a HTML element with attributes.
    */
   public create({
     tag,
@@ -14,29 +14,37 @@ export class Elements {
     return node;
   }
   /**
-   * Attach a listener to the element. Returns a function
-   * which will remove the listener.
+   * Attach a listener to an HTML element. Returns a
+   * method which will remove the listener.
    */
-  public createListener(
-    action: string,
-    element: HTMLElement | Document | Window,
-    handler: (...args: any[]) => any
-  ): () => void {
+  public createListener({
+    element,
+    action,
+    handler,
+  }: {
+    action: string;
+    element: HTMLElement | Document | Window;
+    handler: (...args: any[]) => any;
+  }): () => void {
     if (element.addEventListener) {
       element.addEventListener(action, handler, false);
     } else if ((element as any).attachEvent) {
       (element as any).attachEvent(`on${action}`, handler);
     }
-    return () => this.removeListener(action, element, handler);
+    return () => this.removeListener({ action, element, handler });
   }
   /**
-   * Remove a listener on an element.
+   * Remove a listener from an HTML element.
    */
-  public removeListener(
-    action: string,
-    element: HTMLElement | Document | Window,
-    handler: (...args: any[]) => any
-  ): void {
+  public removeListener({
+    element,
+    action,
+    handler,
+  }: {
+    action: string;
+    element: HTMLElement | Document | Window;
+    handler: (...args: any[]) => any;
+  }): void {
     if (element.addEventListener) {
       element.removeEventListener(action, handler, false);
     } else if ((element as any).detachEvent) {

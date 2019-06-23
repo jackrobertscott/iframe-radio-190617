@@ -1,110 +1,65 @@
+import { Dispatcher } from 'events-and-things';
 import { Elements } from './Elements';
 
-export interface IRadioOptions {
+export interface IRadioConstructor {
   id: string;
-  debug?: boolean;
+  node?: Window | null;
 }
 
-export interface IRadioNode {
-  node: Window;
-  unlisten: () => void;
-}
-
-export interface IRadioListener {
-  namespace: string;
-  callback: (data: any) => void;
-}
-
-export class Radio {
+export class Radio<T> {
   private id: string;
-  private debug: boolean;
-  private connections: Map<number, IRadioNode>;
-  private listeners: Map<number, IRadioListener>;
-  private elements: Elements;
+  private node: Window;
+  private messageDispatcher: Dispatcher<T>;
+  private elementsHandler: Elements;
+  private unlistener: () => void;
   /**
-   * Create an instance of the radio.
+   * Attach radio to the window which is listenening
+   * for messages.
    */
-  constructor({ id, debug }: IRadioOptions) {
+  constructor({ id, node }: IRadioConstructor) {
     this.id = id;
-    this.debug = debug || false;
-    this.connections = new Map();
-    this.listeners = new Map();
-    this.elements = new Elements();
-  }
-  /**
-   * Listen to the events sent from the
-   * window provided to this function and returns
-   * an remove function. Listener must be applied to
-   * the top level window element or it breaks.
-   */
-  public tether(node?: Window | null): () => void {
-    const actor = (event: any) => this.handle(event);
-    const unlisten = this.elements.createListener('message', window, actor);
-    return this.register(this.connections, {
-      node: node || window.parent,
-      unlisten,
+    this.node = node || window.parent;
+    this.messageDispatcher = new Dispatcher();
+    this.elementsHandler = new Elements();
+    this.unlistener = this.elementsHandler.createListener({
+      element: window,
+      action: 'message',
+      handler: (event: any) => this.handleMessages(event),
     });
   }
   /**
-   * Send a message out to the connected windows.
+   * Send a message through the radio.
    */
-  public message(namespace: string, data: any) {
-    this.connections.forEach(({ node }) => {
-      const payload = {
-        id: this.id,
-        namespace,
-        data,
-      };
-      node.postMessage(payload, '*');
-    });
-  }
-  /**
-   * Register an callback to events of a
-   * namespace which are sent through the listeners.
-   */
-  public on(namespace: string, callback: (data: any) => void) {
-    const data = {
-      namespace,
-      callback,
+  public message(data: T): void {
+    const payload = {
+      id: this.id,
+      data,
     };
-    return this.register(this.listeners, data);
+    this.node.postMessage(payload, '*');
   }
   /**
-   * Remove all event listeners.
+   * Listen to all messages which come through the
+   * radio. This returns an unlisten function.
    */
-  public destroy() {
-    this.connections.forEach(({ unlisten }) => unlisten());
+  public listen(callback: () => any): () => void {
+    return this.messageDispatcher.watch(callback);
+  }
+  /**
+   * Remove all listeners.
+   */
+  public destroy(): void {
+    if (this.unlistener) {
+      this.unlistener();
+    }
+    this.messageDispatcher.destroy();
   }
   /**
    * Handle the events which are sent via the windows.
    */
-  private handle(event: any) {
-    const { id, namespace, data } = event.data || ({} as any);
+  private handleMessages(event: any): void {
+    const { id, data } = event.data || ({} as any);
     if (id === this.id) {
-      if (this.debug) {
-        console.log(`Message received for "${namespace}":`, data);
-      }
-      this.listeners.forEach(listener => {
-        if (listener.namespace === namespace) {
-          listener.callback(data);
-        }
-      });
+      this.messageDispatcher.dispatch(data);
     }
-  }
-  /**
-   * Register an item on a map and return
-   * the unregister function.
-   */
-  private register(map: Map<number, unknown>, data: unknown) {
-    let id: number;
-    do {
-      id = Math.random();
-    } while (map.has(id));
-    map.set(id, data);
-    return () => {
-      if (map.has(id)) {
-        map.delete(id);
-      }
-    };
   }
 }
