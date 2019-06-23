@@ -42,7 +42,7 @@ export class Radio<T> {
    * radio. This returns an unlisten function.
    */
   public listen(callback: () => any): () => void {
-    return this.messageDispatcher.watch(callback);
+    return this.messageDispatcher.listen(callback);
   }
   /**
    * Remove all listeners.

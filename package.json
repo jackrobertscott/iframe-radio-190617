@@ -34,6 +34,6 @@
     "typescript": "^3.5.2"
   },
   "dependencies": {
-    "events-and-things": "^0.0.1"
+    "events-and-things": "^0.3.1"
   }
 }
