@@ -41,11 +41,6 @@ const iframeRadio = new Radio({
 });
 ```
 
-#### Params
-
-- `id: string`
-- `node?: Window`
-
 Inside your iframe; create another radio instance to listen to the parent window.
 
 ```ts
@@ -56,6 +51,11 @@ const parentRadio = new Radio({
   node: window.parent,
 });
 ```
+
+**Params**
+
+- `id: string`
+- `node?: Window`
 
 ### Send Messages
 
@@ -81,4 +81,4 @@ parentRadio.listen(({ name }) => {
 
 ## Credits
 
-From the makers of [Window Gadgets](https://windowgadgets.io).
+Made with ❤️ by the makers of [Window Gadgets](https://windowgadgets.io).

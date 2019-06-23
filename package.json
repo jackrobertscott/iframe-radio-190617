@@ -21,7 +21,8 @@
     "build": "yarn run clean && yarn run compile",
     "clean": "rm -rf lib",
     "compile": "tsc",
-    "lint": "tslint src/**/*"
+    "lint": "tslint src/**/*",
+    "ship": "yarn run build && yarn publish"
   },
   "devDependencies": {
     "nodemon": "^1.19.1",
