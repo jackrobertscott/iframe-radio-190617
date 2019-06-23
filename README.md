@@ -28,6 +28,8 @@ This package was created by the makers of [Window Gadgets](https://windowgadgets
 
 The radio may listen to any window object. As such, we will need to create a instance of the radio inside the *iframe* and in the *window* which encapsulates the iframe.
 
+---
+
 ### Setup
 
 Inside your app; create a radio instance to listen to the iframe.
@@ -57,6 +59,8 @@ const parentRadio = new Radio({
 - `id: string`
 - `node?: Window`
 
+---
+
 ### Send Messages
 
 You may send any type of data through the radio.
@@ -66,6 +70,8 @@ import { iframeRadio } from './my-utils';
 
 iframeRadio.message({ name: 'Jack' });
 ```
+
+---
 
 ### Recieve Messages
 
