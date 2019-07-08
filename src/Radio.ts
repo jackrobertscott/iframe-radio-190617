@@ -41,7 +41,7 @@ export class Radio<T> {
    * Listen to all messages which come through the
    * radio. This returns an unlisten function.
    */
-  public listen(callback: () => any): () => void {
+  public listen(callback: (value: T) => any): () => void {
     return this.messageDispatcher.listen(callback);
   }
   /**
